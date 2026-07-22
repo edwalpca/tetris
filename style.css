@@ -93,19 +93,27 @@ body {
   position: absolute;
   top: 0;
   right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: var(--btn-bg);
   color: var(--btn-color);
   border: 1px solid var(--btn-border);
-  border-radius: 6px;
-  width: 36px;
-  height: 36px;
-  font-size: 16px;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.15s, border-color 0.15s;
 }
 
 .theme-toggle:hover {
   background: var(--btn-hover-bg);
+}
+
+.theme-toggle:active {
+  background: var(--btn-border);
 }
 
 .game-container {

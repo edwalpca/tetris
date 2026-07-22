@@ -47,7 +47,7 @@ let board, current, next, score, lines, level, paused, gameOver, lastTime, dropA
 
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
-  themeToggleBtn.textContent = theme === 'light' ? '☀️' : '🌙';
+  themeToggleBtn.textContent = theme === 'light' ? '☀️ Claro' : '🌙 Oscuro';
   gridColor = getComputedStyle(document.documentElement).getPropertyValue('--grid-color').trim();
   localStorage.setItem(THEME_KEY, theme);
 }
