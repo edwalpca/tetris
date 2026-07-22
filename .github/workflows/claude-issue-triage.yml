@@ -51,6 +51,10 @@ jobs:
                  ej. rotateCW, collide, clearLines, spawn, ghostY — usa CLAUDE.md como mapa)
                - Causa probable
                - Sugerencia de abordaje para una futura solución
+               Redacta el cuerpo del comentario en formato Markdown válido que GitHub
+               pueda renderizar (encabezados con `##`, listas con `-`, `` `código` ``
+               entre backticks para nombres de funciones/archivos, etc.), de forma que
+               un humano lo lea con buena estructura visual y no como texto plano.
             4. Busca si ya existe un comentario propio con el marcador
                `<!-- claude-issue-diagnosis -->` (usa `gh issue view ${{ github.event.issue.number }} --json comments`).
                - Si existe, actualízalo (`gh api` PATCH al comentario) en vez de crear uno nuevo.
