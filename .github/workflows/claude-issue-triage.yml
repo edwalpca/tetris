@@ -1,0 +1,60 @@
+name: Claude Issue Triage
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Ensure taxonomy labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create bug --color d73a4a --force
+          gh label create enhancement --color a2eeef --force
+          gh label create question --color d876e3 --force
+          gh label create rendering --color 5319e7 --force
+          gh label create controls --color fbca04 --force
+          gh label create scoring-level --color 0e8a16 --force
+          gh label create performance --color e99695 --force
+          gh label create documentation --color 0075ca --force
+          gh label create needs-diagnosis --color bfdadc --force
+
+      - name: Run Claude issue triage
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Analiza el issue #${{ github.event.issue.number }} de este repositorio
+            (Tetris en JavaScript vanilla, ver CLAUDE.md para arquitectura).
+
+            1. Lee el título y cuerpo del issue.
+            2. Asigna solo labels de este set fijo (créalos si faltan, no inventes otros):
+               bug, enhancement, question, rendering, controls, scoring-level,
+               performance, documentation, needs-diagnosis.
+               Aplícalos con `gh issue edit ${{ github.event.issue.number }} --add-label ...`
+               (quita labels de este mismo set que ya no apliquen tras una edición).
+            3. Redacta un diagnóstico general (NO escribas código ni abras PRs):
+               - Resumen del problema
+               - Área/archivo afectado probable (ubica funciones concretas en game.js,
+                 ej. rotateCW, collide, clearLines, spawn, ghostY — usa CLAUDE.md como mapa)
+               - Causa probable
+               - Sugerencia de abordaje para una futura solución
+            4. Busca si ya existe un comentario propio con el marcador
+               `<!-- claude-issue-diagnosis -->` (usa `gh issue view ${{ github.event.issue.number }} --json comments`).
+               - Si existe, actualízalo (`gh api` PATCH al comentario) en vez de crear uno nuevo.
+               - Si no existe, créalo con `gh issue comment ${{ github.event.issue.number }} --body-file -`,
+                 incluyendo el marcador oculto al inicio del cuerpo.
+          claude_args: |
+            --allowed-tools Bash(gh issue edit:*),Bash(gh issue comment:*),Bash(gh issue view:*),Bash(gh api:*),Bash(gh label create:*)
